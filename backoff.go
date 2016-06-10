@@ -1,8 +1,6 @@
 package backoff
 
-import (
-	"time"
-)
+import "time"
 
 // BackOff is the interface to a back-off interval generator.
 type BackOff interface {
@@ -18,52 +16,51 @@ type BackOff interface {
 //
 //
 
-type zeroBackOff struct{}
-
-func (b *zeroBackOff) Reset() {}
-
-func (b *zeroBackOff) NextInterval() time.Duration {
-	return 0 * time.Second
-}
-
 // A back-off interval generator which always returns a zero interval.
 func NewZeroBackOff() BackOff {
-	return &zeroBackOff{}
-}
-
-//
-//
-
-type constantBackOff struct {
-	interval time.Duration
-}
-
-func (b *constantBackOff) Reset() {}
-
-func (b *constantBackOff) NextInterval() time.Duration {
-	return b.interval
+	return NewConstantBackOff(0)
 }
 
 // A back-off interval generator which always returns the same interval.
 func NewConstantBackOff(interval time.Duration) BackOff {
-	return &constantBackOff{
-		interval: interval,
+	return NewLinearBackOff(interval, 0, interval)
+}
+
+// A back-off interval generator which increases by a constant amount on
+// each unsuccessful retry.
+func NewLinearBackOff(minInterval, addInterval, maxInterval time.Duration) BackOff {
+	b := &linearBackOff{
+		minInterval: minInterval,
+		addInterval: addInterval,
+		maxInterval: maxInterval,
 	}
+
+	b.Reset()
+	return b
 }
 
 //
 //
 
-// type linearBackOff struct {
-// 	interval time.Duration
-// }
-//
-// func (b *linearBackOff) Reset() {}
-//
-// func (b *linearBackOff) NextInterval() time.Duration {
-// 	return
-// }
-//
-// func NewLinearBackoff(start time.Duration, additional time.Duration, max time.Duration) BackOff {
-// 	return &linearBackOff{}
-// }
+type linearBackOff struct {
+	minInterval time.Duration
+	addInterval time.Duration
+	maxInterval time.Duration
+	current     time.Duration
+}
+
+func (b *linearBackOff) Reset() {
+	b.current = b.minInterval
+}
+
+func (b *linearBackOff) NextInterval() time.Duration {
+	current := b.current
+
+	if current <= b.maxInterval-b.addInterval {
+		b.current += b.addInterval
+	} else {
+		b.current = b.maxInterval
+	}
+
+	return current
+}

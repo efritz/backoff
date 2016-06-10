@@ -26,6 +26,10 @@ func (s *BackoffSuite) TestConstantBackOff(c *C) {
 	testSequence(c, b2, time.Minute, []uint{50, 50, 50, 50})
 }
 
-func (s *BackoffSuite) TestLinearBackOff(c *C) {
-	//
+func (s *BackoffSuite) TestLinearBackOffMax(c *C) {
+	b := NewLinearBackOff(time.Millisecond, time.Millisecond, time.Millisecond*4)
+
+	testSequence(c, b, time.Millisecond, []uint{1, 2, 3, 4, 4, 4})
+	b.Reset()
+	testSequence(c, b, time.Millisecond, []uint{1, 2, 3, 4, 4, 4})
 }

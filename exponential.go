@@ -45,6 +45,8 @@ func randomNear(value, ratio float64) float64 {
 	return min + (max-min+1)*rand.Float64()
 }
 
+// Creates an exponential back-off interval generator using the default
+// values for multipler, random factor, minimum, and maximum intervals.
 func NewDefaultExponentialBackoff() BackOff {
 	return NewExponentialBackOff(
 		DefaultMultiplier,
