@@ -8,32 +8,33 @@ Algorithms to generate intervals.
 
 ## Example
 
-`BackOff` is an interface which implements the `Next` and the `Reset` methods.
-The `Next` method will return a `time.Duration` according to the algorithm of
-the back-off and the back-off's current state (generally, the number of times
-the method has been called). The `Reset` method resets any such state.
+`BackOff` is an interface which implements the `NextInterval` and the `Reset`
+methods. The `NextInterval` method returns a `time.Duration` according to the
+algorithm of the back-off and the current state of back-off (generally, state
+of the back-off includes the number of times the method has been called). The
+`Reset` method resets any such state.
 
 ```go
 b := NewLinearBackOff(time.Second, time.Second, time.Minute)
 
-b.Next() // time.Second * 1
-b.Next() // time.Second * 2
-b.Next() // time.Second * 3
+b.NextInterval() // time.Second * 1
+b.NextInterval() // time.Second * 2
+b.NextInterval() // time.Second * 3
 
 // ...
 
-b.Next() // time.Minute
-b.Next() // time.Minute
-b.Next() // time.Minute
+b.NextInterval() // time.Minute
+b.NextInterval() // time.Minute
+b.NextInterval() // time.Minute
 
 // ...
 
 b.Reset()
-b.Next() // time.Second * 1
+b.NextInterval() // time.Second * 1
 ```
 
 Four algorithms are provided. `ZeroBackOff` and `ConstantBackOff` return a
-constant duration on each call to `Next`, and `Reset` is a no-op.
+constant duration on each call to `NextInterval`, and `Reset` is a no-op.
 
 `LinearBackOff`, shown above, returns a linearly increasing duration according
 to a minimum interval, and a maximum interval, and the interval to increase by
