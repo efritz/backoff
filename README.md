@@ -4,11 +4,47 @@
 [![Build Status](https://secure.travis-ci.org/efritz/backoff.png)](http://travis-ci.org/efritz/backoff)
 [![codecov.io](http://codecov.io/github/efritz/backoff/coverage.svg?branch=master)](http://codecov.io/github/efritz/backoff?branch=master)
 
-todo
+Algorithms to generate intervals.
 
 ## Example
 
-todo
+`BackOff` is an interface which implements the `Next` and the `Reset` methods.
+The `Next` method will return a `time.Duration` according to the algorithm of
+the back-off and the back-off's current state (generally, the number of times
+the method has been called). The `Reset` method resets any such state.
+
+```go
+b := NewLinearBackOff(time.Second, time.Second, time.Minute)
+
+b.Next() // time.Second * 1
+b.Next() // time.Second * 2
+b.Next() // time.Second * 3
+
+// ...
+
+b.Next() // time.Minute
+b.Next() // time.Minute
+b.Next() // time.Minute
+
+// ...
+
+b.Reset()
+b.Next() // time.Second * 1
+```
+
+Four algorithms are provided. `ZeroBackOff` and `ConstantBackOff` return a
+constant duration on each call to `Next`, and `Reset` is a no-op.
+
+`LinearBackOff`, shown above, returns a linearly increasing duration according
+to a minimum interval, and a maximum interval, and the interval to increase by
+on each call.
+
+`ExponentialBackOff` returns an exponentially increasing duration according to
+a minimum interval, a maximum interval, a multiplier, and a random factor. The
+multiplier dictates the *base* interval - e.g. (*min* * *multiplier* ^ *n*) on
+the the *nth* attempt, and the random factor dictates the interval's *jitter*
+such that the interval value *i* is randomized around *i* - *i* * *jitter* and
+*i* + *i* * *jitter*.
 
 ## License
 
