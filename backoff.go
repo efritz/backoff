@@ -2,34 +2,34 @@ package backoff
 
 import "time"
 
-// BackOff is the interface to a back-off interval generator.
-type BackOff interface {
+// Backoff is the interface to a backoff interval generator.
+type Backoff interface {
 	// Mark the next call to NextInterval as the "first" retry in a sequence.
 	// If the generated intervals are dependent on the number of consecutive
 	// (unsuccessful) retries, previous retries should be forgotten here.
 	Reset()
 
-	// Generate the next back-off interval.
+	// Generate the next backoff interval.
 	NextInterval() time.Duration
 }
 
 //
 //
 
-// A back-off interval generator which always returns a zero interval.
-func NewZeroBackOff() BackOff {
-	return NewConstantBackOff(0)
+// A backoff interval generator which always returns a zero interval.
+func NewZeroBackoff() Backoff {
+	return NewConstantBackoff(0)
 }
 
-// A back-off interval generator which always returns the same interval.
-func NewConstantBackOff(interval time.Duration) BackOff {
-	return NewLinearBackOff(interval, 0, interval)
+// A backoff interval generator which always returns the same interval.
+func NewConstantBackoff(interval time.Duration) Backoff {
+	return NewLinearBackoff(interval, 0, interval)
 }
 
-// A back-off interval generator which increases by a constant amount on
+// A backoff interval generator which increases by a constant amount on
 // each unsuccessful retry.
-func NewLinearBackOff(minInterval, addInterval, maxInterval time.Duration) BackOff {
-	b := &linearBackOff{
+func NewLinearBackoff(minInterval, addInterval, maxInterval time.Duration) Backoff {
+	b := &linearBackoff{
 		minInterval: minInterval,
 		addInterval: addInterval,
 		maxInterval: maxInterval,
@@ -42,18 +42,18 @@ func NewLinearBackOff(minInterval, addInterval, maxInterval time.Duration) BackO
 //
 //
 
-type linearBackOff struct {
+type linearBackoff struct {
 	minInterval time.Duration
 	addInterval time.Duration
 	maxInterval time.Duration
 	current     time.Duration
 }
 
-func (b *linearBackOff) Reset() {
+func (b *linearBackoff) Reset() {
 	b.current = b.minInterval
 }
 
-func (b *linearBackOff) NextInterval() time.Duration {
+func (b *linearBackoff) NextInterval() time.Duration {
 	current := b.current
 
 	if current <= b.maxInterval-b.addInterval {

@@ -17,11 +17,11 @@ var _ = Suite(&BackoffSuite{})
 //
 //
 
-func testSequence(c *C, b BackOff, base time.Duration, durations []uint) {
+func testSequence(c *C, b Backoff, base time.Duration, durations []uint) {
 	testRandomizedSequence(c, b, base, 0, durations)
 }
 
-func testRandomizedSequence(c *C, b BackOff, base time.Duration, ratio float64, durations []uint) {
+func testRandomizedSequence(c *C, b Backoff, base time.Duration, ratio float64, durations []uint) {
 	for _, duration := range durations {
 		v := b.NextInterval()
 
@@ -33,22 +33,22 @@ func testRandomizedSequence(c *C, b BackOff, base time.Duration, ratio float64, 
 //
 //
 
-type MockBackOff struct {
+type MockBackoff struct {
 	f1 func()
 	f2 func() time.Duration
 }
 
-func NewMockBackOff(f1 func(), f2 func() time.Duration) BackOff {
-	return &MockBackOff{
+func NewMockBackoff(f1 func(), f2 func() time.Duration) Backoff {
+	return &MockBackoff{
 		f1: f1,
 		f2: f2,
 	}
 }
 
-func (m *MockBackOff) Reset() {
+func (m *MockBackoff) Reset() {
 	m.f1()
 }
 
-func (m *MockBackOff) NextInterval() time.Duration {
+func (m *MockBackoff) NextInterval() time.Duration {
 	return m.f2()
 }

@@ -8,14 +8,14 @@ Algorithms to generate intervals.
 
 ## Example
 
-`BackOff` is an interface which implements the `NextInterval` and the `Reset`
+`Backoff` is an interface which implements the `NextInterval` and the `Reset`
 methods. The `NextInterval` method returns a `time.Duration` according to the
-algorithm of the back-off and the current state of back-off (generally, state
-of the back-off includes the number of times the method has been called). The
+algorithm of the backoff and the current state of backoff (generally, state
+of the backoff includes the number of times the method has been called). The
 `Reset` method resets any such state.
 
 ```go
-b := NewLinearBackOff(time.Second, time.Second, time.Minute)
+b := NewLinearBackoff(time.Second, time.Second, time.Minute)
 
 b.NextInterval() // time.Second * 1
 b.NextInterval() // time.Second * 2
@@ -33,14 +33,14 @@ b.Reset()
 b.NextInterval() // time.Second * 1
 ```
 
-Four algorithms are provided. `ZeroBackOff` and `ConstantBackOff` return a
+Four algorithms are provided. `ZeroBackoff` and `ConstantBackoff` return a
 constant duration on each call to `NextInterval`, and `Reset` is a no-op.
 
-`LinearBackOff`, shown above, returns a linearly increasing duration according
+`LinearBackoff`, shown above, returns a linearly increasing duration according
 to a minimum interval, and a maximum interval, and the interval to increase by
 on each call.
 
-`ExponentialBackOff` returns an exponentially increasing duration according to
+`ExponentialBackoff` returns an exponentially increasing duration according to
 a minimum interval, a maximum interval, a multiplier, and a random factor. The
 multiplier dictates the *base* interval - e.g. (*min* * *multiplier* ^ *n*) on
 the the *nth* attempt, and the random factor dictates the interval's *jitter*

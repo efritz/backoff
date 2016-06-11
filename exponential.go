@@ -13,7 +13,7 @@ const (
 	DefaultMaxInterval = 10 * time.Minute
 )
 
-type exponentialBackOff struct {
+type exponentialBackoff struct {
 	multiplier  float64
 	randFactor  float64
 	minInterval time.Duration
@@ -23,11 +23,11 @@ type exponentialBackOff struct {
 	maxAttempts uint
 }
 
-func (b *exponentialBackOff) Reset() {
+func (b *exponentialBackoff) Reset() {
 	b.attempts = 0
 }
 
-func (b *exponentialBackOff) NextInterval() time.Duration {
+func (b *exponentialBackoff) NextInterval() time.Duration {
 	if b.attempts >= b.maxAttempts {
 		return b.maxInterval
 	}
@@ -45,10 +45,10 @@ func randomNear(value, ratio float64) float64 {
 	return min + (max-min+1)*rand.Float64()
 }
 
-// Creates an exponential back-off interval generator using the default
+// Creates an exponential backoff interval generator using the default
 // values for multipler, random factor, minimum, and maximum intervals.
-func NewDefaultExponentialBackoff() BackOff {
-	return NewExponentialBackOff(
+func NewDefaultExponentialBackoff() Backoff {
+	return NewExponentialBackoff(
 		DefaultMultiplier,
 		DefaultRandFactor,
 		DefaultMinInterval,
@@ -56,19 +56,19 @@ func NewDefaultExponentialBackoff() BackOff {
 	)
 }
 
-// A back-off interval generator which returns exponentially increasing
+// A backoff interval generator which returns exponentially increasing
 // intervals for each unsuccessful retry. The base interval is given by
 // the function (MinInterval * Multiplier ^ n) where n is the number of
 // previous failed attempts in the current sequence. The value returned
 // is given by min(MaxInterval, base +/- (base * RandFactor)). A random
 // factor of zero will make the generator deterministic.
-func NewExponentialBackOff(multiplier, randFactor float64, minInterval, maxInterval time.Duration) BackOff {
+func NewExponentialBackoff(multiplier, randFactor float64, minInterval, maxInterval time.Duration) Backoff {
 	// min * mult ^ n <     max
 	//       mult ^ n <     max / min
 	//              n < log(max / min) / log(mult)
 	maxAttempts := math.Log(float64(maxInterval/minInterval)) / math.Log(multiplier)
 
-	b := &exponentialBackOff{
+	b := &exponentialBackoff{
 		multiplier:  multiplier,
 		randFactor:  randFactor,
 		minInterval: minInterval,

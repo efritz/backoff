@@ -7,7 +7,7 @@ import (
 )
 
 func (s *BackoffSuite) TestNonRandom(c *C) {
-	b := NewExponentialBackOff(
+	b := NewExponentialBackoff(
 		2,
 		0,
 		time.Millisecond,
@@ -20,7 +20,7 @@ func (s *BackoffSuite) TestNonRandom(c *C) {
 }
 
 func (s *BackoffSuite) TestMax(c *C) {
-	b := NewExponentialBackOff(
+	b := NewExponentialBackoff(
 		2,
 		0,
 		time.Millisecond,
@@ -33,7 +33,7 @@ func (s *BackoffSuite) TestMax(c *C) {
 }
 
 func (s *BackoffSuite) TestRandomized(c *C) {
-	b := NewExponentialBackOff(
+	b := NewExponentialBackoff(
 		2,
 		.25,
 		time.Millisecond,
@@ -46,7 +46,7 @@ func (s *BackoffSuite) TestRandomized(c *C) {
 }
 
 func (s *BackoffSuite) TestOverflowLimit(c *C) {
-	b := NewExponentialBackOff(
+	b := NewExponentialBackoff(
 		2,
 		0,
 		time.Millisecond,
