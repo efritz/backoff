@@ -7,9 +7,16 @@ import (
 )
 
 const (
-	DefaultMultiplier  = 1.25
-	DefaultRandFactor  = 0.25
+	// DefaultMultiplier is the multiplier used by NewDefaultExponentialBackoff.
+	DefaultMultiplier = 1.25
+
+	// DefaultRandFactor is the random factor used by NewDefaultExponentialBackoff.
+	DefaultRandFactor = 0.25
+
+	// DefaultMinInterval is the minimum interval used by NewDefaultExponentialBackoff.
 	DefaultMinInterval = 10 * time.Millisecond
+
+	// DefaultMaxInterval is the maximum interval used by NewDefaultExponentialBackoff.
 	DefaultMaxInterval = 10 * time.Minute
 )
 
@@ -33,7 +40,7 @@ func (b *exponentialBackoff) NextInterval() time.Duration {
 	}
 
 	n := float64(b.attempts)
-	b.attempts += 1
+	b.attempts++
 
 	return time.Duration(randomNear(float64(b.minInterval)*math.Pow(b.multiplier, n), b.randFactor))
 }
@@ -45,8 +52,9 @@ func randomNear(value, ratio float64) float64 {
 	return min + (max-min+1)*rand.Float64()
 }
 
-// Creates an exponential backoff interval generator using the default
-// values for multipler, random factor, minimum, and maximum intervals.
+// NewDefaultExponentialBackoff creates an exponential backoff interval
+// generator using the default values for multipler, random factor,
+// minimum, and maximum intervals.
 func NewDefaultExponentialBackoff() Backoff {
 	return NewExponentialBackoff(
 		DefaultMultiplier,
@@ -56,12 +64,12 @@ func NewDefaultExponentialBackoff() Backoff {
 	)
 }
 
-// A backoff interval generator which returns exponentially increasing
-// intervals for each unsuccessful retry. The base interval is given by
-// the function (MinInterval * Multiplier ^ n) where n is the number of
-// previous failed attempts in the current sequence. The value returned
-// is given by min(MaxInterval, base +/- (base * RandFactor)). A random
-// factor of zero will make the generator deterministic.
+// NewExponentialBackoff creates a backoff interval generator which returns
+// exponentially increasing intervals for each unsuccessful retry. The base
+// interval is given by the function (MinInterval * Multiplier ^ n) where n
+// is the number of previous failed attempts in the current sequence. The
+// value returned is given by min(MaxInterval, base +/- (base * RandFactor)).
+// A random factor of zero will make the generator deterministic.
 func NewExponentialBackoff(multiplier, randFactor float64, minInterval, maxInterval time.Duration) Backoff {
 	// min * mult ^ n <     max
 	//       mult ^ n <     max / min

@@ -16,18 +16,20 @@ type Backoff interface {
 //
 //
 
-// A backoff interval generator which always returns a zero interval.
+// NewZeroBackoff creates a backoff interval generator which always returns
+// a zero interval.
 func NewZeroBackoff() Backoff {
 	return NewConstantBackoff(0)
 }
 
-// A backoff interval generator which always returns the same interval.
+// NewConstantBackoff creates a backoff interval generator which always returns
+// the same interval.
 func NewConstantBackoff(interval time.Duration) Backoff {
 	return NewLinearBackoff(interval, 0, interval)
 }
 
-// A backoff interval generator which increases by a constant amount on
-// each unsuccessful retry.
+// NewLinearBackoff creates a backoff interval generator which increases by a
+// constant amount on each unsuccessful retry.
 func NewLinearBackoff(minInterval, addInterval, maxInterval time.Duration) Backoff {
 	b := &linearBackoff{
 		minInterval: minInterval,
