@@ -3,6 +3,7 @@
 [![GoDoc](https://godoc.org/github.com/efritz/backoff?status.svg)](https://godoc.org/github.com/efritz/backoff)
 [![Build Status](https://secure.travis-ci.org/efritz/backoff.png)](http://travis-ci.org/efritz/backoff)
 [![codecov.io](http://codecov.io/github/efritz/backoff/coverage.svg?branch=master)](http://codecov.io/github/efritz/backoff?branch=master)
+[![Go Report Card](https://goreportcard.com/badge/github.com/efritz/backoff)](https://goreportcard.com/report/github.com/efritz/backoff)
 
 Algorithms to generate intervals.
 
