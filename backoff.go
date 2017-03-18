@@ -2,19 +2,25 @@ package backoff
 
 import "time"
 
-// Backoff is the interface to a backoff interval generator.
-type Backoff interface {
-	// Mark the next call to NextInterval as the "first" retry in a sequence.
-	// If the generated intervals are dependent on the number of consecutive
-	// (unsuccessful) retries, previous retries should be forgotten here.
-	Reset()
+type (
+	// Backoff is the interface to a backoff interval generator.
+	Backoff interface {
+		// Mark the next call to NextInterval as the "first" retry in a sequence.
+		// If the generated intervals are dependent on the number of consecutive
+		// (unsuccessful) retries, previous retries should be forgotten here.
+		Reset()
 
-	// Generate the next backoff interval.
-	NextInterval() time.Duration
-}
+		// Generate the next backoff interval.
+		NextInterval() time.Duration
+	}
 
-//
-//
+	linearBackoff struct {
+		minInterval time.Duration
+		addInterval time.Duration
+		maxInterval time.Duration
+		current     time.Duration
+	}
+)
 
 // NewZeroBackoff creates a backoff interval generator which always returns
 // a zero interval.
@@ -39,16 +45,6 @@ func NewLinearBackoff(minInterval, addInterval, maxInterval time.Duration) Backo
 
 	b.Reset()
 	return b
-}
-
-//
-//
-
-type linearBackoff struct {
-	minInterval time.Duration
-	addInterval time.Duration
-	maxInterval time.Duration
-	current     time.Duration
 }
 
 func (b *linearBackoff) Reset() {

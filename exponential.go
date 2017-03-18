@@ -20,37 +20,17 @@ const (
 	DefaultMaxInterval = 10 * time.Minute
 )
 
-type exponentialBackoff struct {
-	multiplier  float64
-	randFactor  float64
-	minInterval time.Duration
-	maxInterval time.Duration
+type (
+	exponentialBackoff struct {
+		multiplier  float64
+		randFactor  float64
+		minInterval time.Duration
+		maxInterval time.Duration
 
-	attempts    uint
-	maxAttempts uint
-}
-
-func (b *exponentialBackoff) Reset() {
-	b.attempts = 0
-}
-
-func (b *exponentialBackoff) NextInterval() time.Duration {
-	if b.attempts >= b.maxAttempts {
-		return b.maxInterval
+		attempts    uint
+		maxAttempts uint
 	}
-
-	n := float64(b.attempts)
-	b.attempts++
-
-	return time.Duration(randomNear(float64(b.minInterval)*math.Pow(b.multiplier, n), b.randFactor))
-}
-
-func randomNear(value, ratio float64) float64 {
-	min := value - (value * ratio)
-	max := value + (value * ratio)
-
-	return min + (max-min+1)*rand.Float64()
-}
+)
 
 // NewDefaultExponentialBackoff creates an exponential backoff interval
 // generator using the default values for multipler, random factor,
@@ -88,4 +68,26 @@ func NewExponentialBackoff(multiplier, randFactor float64, minInterval, maxInter
 
 	b.Reset()
 	return b
+}
+
+func (b *exponentialBackoff) Reset() {
+	b.attempts = 0
+}
+
+func (b *exponentialBackoff) NextInterval() time.Duration {
+	if b.attempts >= b.maxAttempts {
+		return b.maxInterval
+	}
+
+	n := float64(b.attempts)
+	b.attempts++
+
+	return time.Duration(jitter(float64(b.minInterval)*math.Pow(b.multiplier, n), b.randFactor))
+}
+
+func jitter(value, ratio float64) float64 {
+	min := value - (value * ratio)
+	max := value + (value * ratio)
+
+	return min + (max-min+1)*rand.Float64()
 }
