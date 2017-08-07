@@ -4,51 +4,36 @@ import (
 	"testing"
 	"time"
 
-	. "gopkg.in/check.v1"
+	"github.com/aphistic/sweet"
+	"github.com/aphistic/sweet-junit"
+	. "github.com/onsi/gomega"
 )
 
-// Hook up gocheck into the "go test" runner.
-func Test(t *testing.T) { TestingT(t) }
+func TestMain(m *testing.M) {
+	RegisterFailHandler(sweet.GomegaFail)
 
-type BackoffSuite struct{}
+	sweet.Run(m, func(s *sweet.S) {
+		s.RegisterPlugin(junit.NewPlugin())
 
-var _ = Suite(&BackoffSuite{})
-
-//
-//
-
-func testSequence(c *C, b Backoff, base time.Duration, durations []uint) {
-	testRandomizedSequence(c, b, base, 0, durations)
+		s.AddSuite(&BackoffSuite{})
+		s.AddSuite(&ExponentialSuite{})
+	})
 }
 
-func testRandomizedSequence(c *C, b Backoff, base time.Duration, ratio float64, durations []uint) {
+//
+// Sequence Assertion Helpers
+
+func testSequence(b Backoff, base time.Duration, durations []uint) {
+	testRandomizedSequence(b, base, 0, durations)
+}
+
+func testRandomizedSequence(b Backoff, base time.Duration, ratio float64, durations []uint) {
 	for _, duration := range durations {
-		v := b.NextInterval()
+		lo := time.Duration(float64(base) * (1 - ratio) * float64(duration))
+		hi := time.Duration(float64(base) * (1 + ratio) * float64(duration))
 
-		c.Assert(v >= time.Duration(float64(base)*float64(duration)*(1-ratio)), Equals, true)
-		c.Assert(v <= time.Duration(float64(base)*float64(duration)*(1+ratio)), Equals, true)
+		val := b.NextInterval()
+		Expect(val).To(BeNumerically(">=", lo))
+		Expect(val).To(BeNumerically("<=", hi))
 	}
-}
-
-//
-//
-
-type MockBackoff struct {
-	f1 func()
-	f2 func() time.Duration
-}
-
-func NewMockBackoff(f1 func(), f2 func() time.Duration) Backoff {
-	return &MockBackoff{
-		f1: f1,
-		f2: f2,
-	}
-}
-
-func (m *MockBackoff) Reset() {
-	m.f1()
-}
-
-func (m *MockBackoff) NextInterval() time.Duration {
-	return m.f2()
 }

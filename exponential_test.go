@@ -1,12 +1,15 @@
 package backoff
 
 import (
+	"testing"
 	"time"
 
-	. "gopkg.in/check.v1"
+	. "github.com/onsi/gomega"
 )
 
-func (s *BackoffSuite) TestNonRandom(c *C) {
+type ExponentialSuite struct{}
+
+func (s *ExponentialSuite) TestNonRandom(t *testing.T) {
 	b := NewExponentialBackoff(
 		2,
 		0,
@@ -14,12 +17,12 @@ func (s *BackoffSuite) TestNonRandom(c *C) {
 		time.Minute,
 	)
 
-	testSequence(c, b, time.Millisecond, []uint{1, 2, 4, 8, 16, 32})
+	testSequence(b, time.Millisecond, []uint{1, 2, 4, 8, 16, 32})
 	b.Reset()
-	testSequence(c, b, time.Millisecond, []uint{1, 2, 4, 8, 16, 32})
+	testSequence(b, time.Millisecond, []uint{1, 2, 4, 8, 16, 32})
 }
 
-func (s *BackoffSuite) TestMax(c *C) {
+func (s *ExponentialSuite) TestMax(t *testing.T) {
 	b := NewExponentialBackoff(
 		2,
 		0,
@@ -27,12 +30,12 @@ func (s *BackoffSuite) TestMax(c *C) {
 		time.Millisecond*4,
 	)
 
-	testSequence(c, b, time.Millisecond, []uint{1, 2, 4, 4, 4, 4})
+	testSequence(b, time.Millisecond, []uint{1, 2, 4, 4, 4, 4})
 	b.Reset()
-	testSequence(c, b, time.Millisecond, []uint{1, 2, 4, 4, 4, 4})
+	testSequence(b, time.Millisecond, []uint{1, 2, 4, 4, 4, 4})
 }
 
-func (s *BackoffSuite) TestRandomized(c *C) {
+func (s *ExponentialSuite) TestRandomized(t *testing.T) {
 	b := NewExponentialBackoff(
 		2,
 		.25,
@@ -40,12 +43,12 @@ func (s *BackoffSuite) TestRandomized(c *C) {
 		time.Minute,
 	)
 
-	testRandomizedSequence(c, b, time.Millisecond, .25, []uint{1, 2, 4, 8, 16, 32})
+	testRandomizedSequence(b, time.Millisecond, .25, []uint{1, 2, 4, 8, 16, 32})
 	b.Reset()
-	testRandomizedSequence(c, b, time.Millisecond, .25, []uint{1, 2, 4, 8, 16, 32})
+	testRandomizedSequence(b, time.Millisecond, .25, []uint{1, 2, 4, 8, 16, 32})
 }
 
-func (s *BackoffSuite) TestOverflowLimit(c *C) {
+func (s *ExponentialSuite) TestOverflowLimit(t *testing.T) {
 	b := NewExponentialBackoff(
 		2,
 		0,
@@ -54,6 +57,6 @@ func (s *BackoffSuite) TestOverflowLimit(c *C) {
 	)
 
 	for i := 0; i < 100; i++ {
-		c.Assert(b.NextInterval() >= 1000, Equals, true)
+		Expect(b.NextInterval()).To(BeNumerically(">=", 1000))
 	}
 }

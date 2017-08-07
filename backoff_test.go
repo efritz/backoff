@@ -1,35 +1,36 @@
 package backoff
 
 import (
+	"testing"
 	"time"
-
-	. "gopkg.in/check.v1"
 )
 
-func (s *BackoffSuite) TestZeroBackoff(c *C) {
+type BackoffSuite struct{}
+
+func (s *BackoffSuite) TestZeroBackoff(t *testing.T) {
 	b := NewZeroBackoff()
-	testSequence(c, b, time.Millisecond, []uint{0, 0, 0, 0})
+	testSequence(b, time.Millisecond, []uint{0, 0, 0, 0})
 	b.Reset()
-	testSequence(c, b, time.Millisecond, []uint{0, 0, 0, 0})
+	testSequence(b, time.Millisecond, []uint{0, 0, 0, 0})
 }
 
-func (s *BackoffSuite) TestConstantBackoff(c *C) {
+func (s *BackoffSuite) TestConstantBackoff(t *testing.T) {
 	b1 := NewConstantBackoff(25 * time.Second)
 	b2 := NewConstantBackoff(50 * time.Minute)
 
-	testSequence(c, b1, time.Second, []uint{25, 25, 25, 25})
+	testSequence(b1, time.Second, []uint{25, 25, 25, 25})
 	b2.Reset()
-	testSequence(c, b2, time.Minute, []uint{50, 50, 50, 50})
+	testSequence(b2, time.Minute, []uint{50, 50, 50, 50})
 
-	testSequence(c, b1, time.Second, []uint{25, 25, 25, 25})
+	testSequence(b1, time.Second, []uint{25, 25, 25, 25})
 	b1.Reset()
-	testSequence(c, b2, time.Minute, []uint{50, 50, 50, 50})
+	testSequence(b2, time.Minute, []uint{50, 50, 50, 50})
 }
 
-func (s *BackoffSuite) TestLinearBackoffMax(c *C) {
+func (s *BackoffSuite) TestLinearBackoffMax(t *testing.T) {
 	b := NewLinearBackoff(time.Millisecond, time.Millisecond, time.Millisecond*4)
 
-	testSequence(c, b, time.Millisecond, []uint{1, 2, 3, 4, 4, 4})
+	testSequence(b, time.Millisecond, []uint{1, 2, 3, 4, 4, 4})
 	b.Reset()
-	testSequence(c, b, time.Millisecond, []uint{1, 2, 3, 4, 4, 4})
+	testSequence(b, time.Millisecond, []uint{1, 2, 3, 4, 4, 4})
 }
