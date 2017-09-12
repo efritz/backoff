@@ -84,7 +84,7 @@ func (b *linearBackoff) NextInterval() time.Duration {
 
 // NewExponentialBackoff creates an exponential backoff interval generator using
 // the given minimum and maximum interval. The base interval is given by the
-// following function where `n` is the number of previous failed attempts in the
+// following function where n is the number of previous failed attempts in the
 // current sequence.
 //
 //    `MinInterval * Multiplier ^ n`
