@@ -16,6 +16,10 @@ type (
 
 		// Generate the next backoff interval.
 		NextInterval() time.Duration
+
+		// Clone creates a copy of the backoff with a nil-internal state. This
+		// allows a backoff object to be used as a prototype factory.
+		Clone() Backoff
 	}
 
 	linearBackoff struct {
@@ -77,6 +81,10 @@ func (b *linearBackoff) NextInterval() time.Duration {
 	}
 
 	return current
+}
+
+func (b *linearBackoff) Clone() Backoff {
+	return NewLinearBackoff(b.minInterval, b.addInterval, b.maxInterval)
 }
 
 //
@@ -149,6 +157,16 @@ func (b *exponentialBackoff) NextInterval() time.Duration {
 	b.attempts++
 
 	return time.Duration(jitter(float64(b.minInterval)*math.Pow(b.multiplier, n), b.randFactor))
+}
+
+func (b *exponentialBackoff) Clone() Backoff {
+	return &exponentialBackoff{
+		minInterval: b.minInterval,
+		maxInterval: b.maxInterval,
+		multiplier:  b.multiplier,
+		randFactor:  b.randFactor,
+		maxAttempts: b.maxAttempts,
+	}
 }
 
 func jitter(value, ratio float64) float64 {
