@@ -2,8 +2,8 @@
 
 [![GoDoc](https://godoc.org/github.com/efritz/backoff?status.svg)](https://godoc.org/github.com/efritz/backoff)
 [![Build Status](https://secure.travis-ci.org/efritz/backoff.png)](http://travis-ci.org/efritz/backoff)
-[![codecov.io](http://codecov.io/github/efritz/backoff/coverage.svg?branch=master)](http://codecov.io/github/efritz/backoff?branch=master)
-[![Go Report Card](https://goreportcard.com/badge/github.com/efritz/backoff)](https://goreportcard.com/report/github.com/efritz/backoff)
+[![Maintainability](https://api.codeclimate.com/v1/badges/42e48a75e8a70877b9d2/maintainability)](https://codeclimate.com/github/efritz/backoff/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/42e48a75e8a70877b9d2/test_coverage)](https://codeclimate.com/github/efritz/backoff/test_coverage)
 
 Algorithms to generate intervals.
 
