@@ -4,7 +4,6 @@ require (
 	github.com/aphistic/sweet v0.0.0-20180618201346-68e18ab55a67
 	github.com/aphistic/sweet-junit v0.0.0-20171005212431-6b78f7014f7c
 	github.com/kr/pretty v0.1.0 // indirect
-	github.com/kr/pty v1.1.3 // indirect
 	github.com/mattn/go-colorable v0.0.9 // indirect
 	github.com/mattn/go-isatty v0.0.4 // indirect
 	github.com/mgutz/ansi v0.0.0-20170206155736-9520e82c474b // indirect
