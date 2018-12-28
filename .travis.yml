@@ -1,12 +1,13 @@
 env:
-  - GO111MODULE=on
-  - CC_TEST_REPORTER_ID=4caa3beba12b799d5fcc95c9451a357bb70f97a139645606fe49841345249747
+  global:
+    - GO111MODULE=on
+    - CC_TEST_REPORTER_ID=4caa3beba12b799d5fcc95c9451a357bb70f97a139645606fe49841345249747
 
 language: go
+dist: xenial
 go:
   - 1.11.x
   - tip
-dist: xenial
 
 script:
   - go test -coverprofile=c.out -covermode=atomic
