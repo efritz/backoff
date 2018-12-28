@@ -1,14 +1,15 @@
-language: go
-dist: xenial
-go:
-  - 1.11.x
-  - tip
-script: go test -coverprofile=c.out -covermode=atomic
-
 env:
   global:
     - GO111MODULE=on
     - CC_TEST_REPORTER_ID=4caa3beba12b799d5fcc95c9451a357bb70f97a139645606fe49841345249747
+
+dist: xenial
+language: go
+go:
+  - 1.11.x
+  - tip
+install: go mod vendor
+script: go test -mod vendor -coverprofile=c.out -covermode=atomic
 
 before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
