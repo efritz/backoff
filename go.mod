@@ -1,5 +1,7 @@
 module github.com/efritz/backoff
 
+go 1.12
+
 require (
 	github.com/aphistic/sweet v0.0.0-20180618201346-68e18ab55a67
 	github.com/aphistic/sweet-junit v0.0.0-20171005212431-6b78f7014f7c

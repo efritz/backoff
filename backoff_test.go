@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/aphistic/sweet"
-	"github.com/aphistic/sweet-junit"
+	junit "github.com/aphistic/sweet-junit"
 	. "github.com/onsi/gomega"
 )
 
@@ -53,6 +53,12 @@ func (s *BackoffSuite) TestNonRandom(t sweet.T) {
 	testSequence(b, time.Millisecond, []uint{1, 2, 4, 8, 16, 32})
 	b.Reset()
 	testSequence(b, time.Millisecond, []uint{1, 2, 4, 8, 16, 32})
+}
+
+func (s *BackoffSuite) TestZeroTimeMinimum(t sweet.T) {
+	Expect(func() {
+		NewExponentialBackoff(0*time.Millisecond, time.Millisecond*4)
+	}).ToNot(Panic())
 }
 
 func (s *BackoffSuite) TestMax(t sweet.T) {
