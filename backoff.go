@@ -103,6 +103,12 @@ func (b *linearBackoff) Clone() Backoff {
 //
 //     `min(MaxInterval, base +/- (base * RandFactor))`.
 func NewExponentialBackoff(minInterval, maxInterval time.Duration, configs ...ExponentialConfigFunc) Backoff {
+	if minInterval == 0 {
+		// To avoid a divide by zero we set the minimum interval to something
+		// that makes sense.
+		minInterval = 1
+	}
+
 	backoff := &exponentialBackoff{
 		minInterval: minInterval,
 		maxInterval: maxInterval,
