@@ -50,7 +50,7 @@ such that the interval value *i* is randomized around *i* - *i* * *jitter* and
 
 ## License
 
-Copyright (c) 2016 Eric Fritz
+Copyright (c) 2025 Eric Fritz
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
