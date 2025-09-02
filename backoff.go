@@ -127,7 +127,7 @@ func NewExponentialBackoff(minInterval, maxInterval time.Duration, configs ...Ex
 	var (
 		num         = math.Log(float64(maxInterval / minInterval))
 		denom       = math.Log(backoff.multiplier)
-		maxAttempts = uint(num / denom)
+		maxAttempts = uint(math.Ceil(num / denom))
 	)
 
 	backoff.maxAttempts = maxAttempts

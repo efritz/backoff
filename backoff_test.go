@@ -42,10 +42,10 @@ func TestNonRandom(t *testing.T) {
 }
 
 func TestMax(t *testing.T) {
-	b := NewExponentialBackoff(time.Millisecond, time.Millisecond*4)
-	testSequence(t, b, time.Millisecond, []uint{1, 2, 4, 4, 4, 4})
+	b := NewExponentialBackoff(time.Second, time.Minute*15)
+	testSequence(t, b, time.Second, []uint{1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 900, 900})
 	b.Reset()
-	testSequence(t, b, time.Millisecond, []uint{1, 2, 4, 4, 4, 4})
+	testSequence(t, b, time.Second, []uint{1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 900, 900})
 }
 
 func TestRandomized(t *testing.T) {
