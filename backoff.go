@@ -176,8 +176,7 @@ func (b *exponentialBackoff) Clone() Backoff {
 }
 
 func jitter(value, ratio float64) float64 {
-	min := value - (value * ratio)
-	max := value + (value * ratio)
-
-	return min + (max-min+1)*rand.Float64()
+	min := value * (1 - ratio)
+	max := value * (1 + ratio)
+	return min + (max-min)*rand.Float64()
 }
