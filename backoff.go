@@ -156,7 +156,13 @@ func (b *exponentialBackoff) NextInterval() time.Duration {
 	n := float64(b.attempts)
 	b.attempts++
 
-	return time.Duration(jitter(float64(b.minInterval)*math.Pow(b.multiplier, n), b.randFactor))
+	base := float64(b.minInterval) * math.Pow(b.multiplier, n)
+	jittered := jitter(base, b.randFactor)
+	if jittered > float64(b.maxInterval) {
+		return b.maxInterval
+	}
+
+	return time.Duration(jittered)
 }
 
 func (b *exponentialBackoff) Clone() Backoff {
